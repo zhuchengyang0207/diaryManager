@@ -1,0 +1,137 @@
+object Form1: TForm1
+  Left = 267
+  Height = 347
+  Top = 247
+  Width = 413
+  Caption = 'diaryManager'
+  ClientHeight = 327
+  ClientWidth = 413
+  Menu = MainMenu1
+  LCLVersion = '1.6.4.0'
+  object Memo1: TMemo
+    Left = 8
+    Height = 313
+    Top = 8
+    Width = 256
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 272
+    Height = 17
+    Top = 8
+    Width = 26
+    Caption = 'Year'
+    ParentColor = False
+  end
+  object Button1: TButton
+    Left = 272
+    Height = 49
+    Top = 160
+    Width = 136
+    Caption = 'Create'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object SpinEdit1: TSpinEdit
+    Left = 328
+    Height = 25
+    Top = 8
+    Width = 80
+    MaxValue = 10000
+    OnChange = SpinEdit1Change
+    TabOrder = 2
+    Value = 2020
+  end
+  object SpinEdit2: TSpinEdit
+    Left = 328
+    Height = 25
+    Top = 32
+    Width = 80
+    MaxValue = 12
+    MinValue = 1
+    OnChange = SpinEdit2Change
+    TabOrder = 3
+    Value = 1
+  end
+  object SpinEdit3: TSpinEdit
+    Left = 328
+    Height = 25
+    Top = 56
+    Width = 80
+    MaxValue = 31
+    MinValue = 1
+    OnChange = SpinEdit3Change
+    TabOrder = 4
+    Value = 1
+  end
+  object Label2: TLabel
+    Left = 272
+    Height = 17
+    Top = 36
+    Width = 38
+    Caption = 'Month'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 272
+    Height = 17
+    Top = 64
+    Width = 22
+    Caption = 'Day'
+    ParentColor = False
+  end
+  object Button2: TButton
+    Left = 272
+    Height = 49
+    Top = 216
+    Width = 136
+    Caption = 'Load'
+    OnClick = Button2Click
+    TabOrder = 5
+  end
+  object Edit1: TEdit
+    Left = 272
+    Height = 22
+    Top = 112
+    Width = 136
+    EchoMode = emPassword
+    Font.CharSet = SYMBOL_CHARSET
+    Font.Height = -12
+    Font.Name = 'Wingdings'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentFont = False
+    PasswordChar = '|'
+    TabOrder = 6
+  end
+  object Label4: TLabel
+    Left = 304
+    Height = 17
+    Top = 88
+    Width = 56
+    Caption = 'Password'
+    ParentColor = False
+  end
+  object Button3: TButton
+    Left = 272
+    Height = 49
+    Top = 272
+    Width = 136
+    Caption = 'Modify'
+    OnClick = Button3Click
+    TabOrder = 7
+  end
+  object MainMenu1: TMainMenu
+    left = 128
+    top = 56
+    object MenuItem1: TMenuItem
+      Caption = 'About'
+      object MenuItem2: TMenuItem
+        Caption = 'This project'
+      end
+      object MenuItem3: TMenuItem
+        Caption = 'Programmer'
+      end
+    end
+  end
+end
