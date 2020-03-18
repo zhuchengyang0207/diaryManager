@@ -1,0 +1,370 @@
+unit Unit1;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtDlgs,
+  Menus, StdCtrls, Spin, ExtCtrls, Dos, Md5, zul_file_system;
+
+type
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Button5: TButton;
+    Edit1: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    MainMenu1: TMainMenu;
+    Memo1: TMemo;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    SpinEdit1: TSpinEdit;
+    SpinEdit2: TSpinEdit;
+    SpinEdit3: TSpinEdit;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure SpinEdit1Change(Sender: TObject);
+    procedure SpinEdit2Change(Sender: TObject);
+    procedure SpinEdit3Change(Sender: TObject);
+  private
+    { private declarations }
+  public
+    { public declarations }
+  end;
+
+var
+  Form1: TForm1;
+  dates_:array[1..12]of longint=(31,28,31,30,31,30,31,31,30,31,30,31);
+
+implementation
+
+{$R *.lfm}
+
+{ TForm1 }
+
+function IsLeapYear(a:longint):boolean;
+begin
+  if(a mod 400=0)or((a mod 100<>0)and(a mod 4=0)) then
+    exit(true)
+  else
+    exit(false);
+end;
+
+procedure TForm1.SpinEdit1Change(Sender: TObject);
+begin
+  if SpinEdit1.Value>SpinEdit1.MaxValue then
+    SpinEdit1.Value:=SpinEdit1.MaxValue;
+  if SpinEdit1.Value<SpinEdit1.MinValue then
+    SpinEdit1.Value:=SpinEdit1.MinValue;
+  if not IsLeapYear(SpinEdit1.Value) then
+    if SpinEdit2.Value=2 then
+      begin
+        if SpinEdit3.Value=29 then
+          SpinEdit3.Value:=28;
+        SpinEdit3.MaxValue:=28;
+      end;
+  if IsLeapYear(SpinEdit1.Value) then
+    if SpinEdit2.Value=2 then
+      SpinEdit3.MaxValue:=29;
+end;
+
+function crypt(const plaintext,key:ansistring):ansistring;
+var
+  i:longint;
+begin
+  crypt:='';
+  for i:=1 to length(plaintext) do
+    crypt:=crypt+chr(ord(plaintext[i])xor ord(key[(i-1)mod length(key)+1]));
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  salt,pth,psw:ansistring;
+begin
+  pth:='bin\'+SpinEdit1.Value.ToString+'\'+
+              SpinEdit2.Value.ToString+'\'+
+              SpinEdit3.Value.ToString;
+  salt:=SpinEdit1.Value.ToString+'S'+
+        SpinEdit2.Value.ToString+'S'+
+        SpinEdit3.Value.ToString+'S';
+  if zul_file_system.fileexist(pth+'\password.ini') then
+    begin
+      showmessage('Diary already exist!');
+      exit;
+    end;
+  psw:=Edit1.Text;
+  if psw='' then
+    begin
+      showmessage('Password empty!');
+      exit;
+    end;
+  zul_file_system.createdir(pth);
+  zul_file_system.
+    writetofile(pth+'\password.ini',
+                mdprint(md5string(salt+psw)));
+  zul_file_system.
+    writetofile(pth+'\context.ini',
+                crypt(Memo1.Lines.Text,psw));
+  Memo1.Lines.Text:='';
+  zul_file_system.writetofile('bin\indx.ini',
+    zul_file_system.loadfromfile('bin\indx.ini')+
+      SpinEdit1.Value.ToString+' '+
+      SpinEdit2.Value.ToString+' '+
+      SpinEdit3.Value.ToString+#13#10);
+  showmessage('Success!');
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  salt,pth,psw:ansistring;
+begin
+  pth:='bin\'+SpinEdit1.Value.ToString+'\'+
+              SpinEdit2.Value.ToString+'\'+
+              SpinEdit3.Value.ToString;
+  salt:=SpinEdit1.Value.ToString+'S'+
+        SpinEdit2.Value.ToString+'S'+
+        SpinEdit3.Value.ToString+'S';
+  if not zul_file_system.fileexist(pth+'\password.ini') then
+    begin
+      showmessage('Diary not exist!');
+      exit;
+    end;
+  psw:=Edit1.Text;
+  if zul_file_system.loadfromfile(pth+'\password.ini')<>
+     mdprint(md5string(salt+psw)) then
+    begin
+      showmessage('Password wrong!');
+      exit;
+    end;
+  if Memo1.Lines.Text<>'' then
+    begin
+      showmessage('In order to ensure safety, please make the memo empty.');
+      exit;
+    end;
+  Memo1.Lines.Text:=crypt(zul_file_system.loadfromfile(pth+'\context.ini'),psw);
+  showmessage('Success!');
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  salt,pth,psw:ansistring;
+begin
+  pth:='bin\'+SpinEdit1.Value.ToString+'\'+
+              SpinEdit2.Value.ToString+'\'+
+              SpinEdit3.Value.ToString;
+  salt:=SpinEdit1.Value.ToString+'S'+
+        SpinEdit2.Value.ToString+'S'+
+        SpinEdit3.Value.ToString+'S';
+  if not zul_file_system.fileexist(pth+'\password.ini') then
+    begin
+      showmessage('Diary not exist!');
+      exit;
+    end;
+  psw:=Edit1.Text;
+  if zul_file_system.loadfromfile(pth+'\password.ini')<>
+     mdprint(md5string(salt+psw)) then
+    begin
+      showmessage('Password wrong!');
+      exit;
+    end;
+  zul_file_system.
+    writetofile(pth+'\context.ini',
+                crypt(Memo1.Lines.Text,psw));
+  Memo1.Lines.Text:='';
+  showmessage('Success!');
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+  _list,tmps,salt,pth,psw:ansistring;
+begin
+  pth:='bin\'+SpinEdit1.Value.ToString+'\'+
+              SpinEdit2.Value.ToString+'\'+
+              SpinEdit3.Value.ToString;
+  salt:=SpinEdit1.Value.ToString+'S'+
+        SpinEdit2.Value.ToString+'S'+
+        SpinEdit3.Value.ToString+'S';
+  if not zul_file_system.fileexist(pth+'\password.ini') then
+    begin
+      showmessage('Diary not exist!');
+      exit;
+    end;
+  psw:=Edit1.Text;
+  if zul_file_system.loadfromfile(pth+'\password.ini')<>
+     mdprint(md5string(salt+psw)) then
+    begin
+      showmessage('Password wrong!');
+      exit;
+    end;
+  if Memo1.Lines.Text<>'ok' then
+    begin
+      showmessage('In order to ensure safety, please type "ok" in the memo.');
+      exit;
+    end;
+  zul_file_system.destroyfile(pth+'\password.ini');
+  zul_file_system.destroyfile(pth+'\context.ini');
+  zul_file_system.destroydir(pth);
+  _list:=zul_file_system.loadfromfile('bin\indx.ini');
+  tmps:=SpinEdit1.Value.ToString+' '+
+        SpinEdit2.Value.ToString+' '+
+        SpinEdit3.Value.ToString+#13#10;
+  delete(_list,pos(tmps,_list),length(tmps));
+  zul_file_system.writetofile('bin\indx.ini',_list);
+  if pos(SpinEdit1.Value.ToString+' '+
+         SpinEdit2.Value.ToString,_list)=0 then
+    zul_file_system.destroydir('bin\'+
+                                SpinEdit1.Value.ToString+'\'+
+                                SpinEdit2.Value.ToString);
+  if pos(SpinEdit1.Value.ToString,_list)=0 then
+    zul_file_system.destroydir('bin\'+SpinEdit1.Value.ToString);
+  Memo1.Lines.Text:='';
+end;
+
+type
+  _date=record
+    year,month,day:longint;
+  end;
+
+operator <(a,b:_date)c:boolean;
+begin
+  if a.year<>b.year then
+    exit(a.year<b.year);
+  if a.month<>b.month then
+    exit(a.month<b.month);
+  if a.day<>b.day then
+    exit(a.day<b.day);
+  exit(false);
+end;
+
+function string2hex(a:ansistring):ansistring;
+var
+  ans:ansistring;
+  i:longint;
+  function int2hex(a:longint):char;
+  begin
+    if(a>=0)and(a<=9) then
+      exit(chr(a+48))
+    else
+      exit(chr(a+55));
+  end;
+begin
+  ans:='';
+  for i:=1 to length(a) do
+    ans:=ans+int2hex(ord(a[i])div 16)+int2hex(ord(a[i])mod 16);
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+var
+  a:array of _date;
+  fin:text;
+  tmp:_date;
+  pth,salt:ansistring;
+  len,i,j:longint;
+begin
+  zul_file_system.destroydirSTRONG('exports');
+  zul_file_system.createdir('exports');
+  system.assign(fin,'bin\indx.ini');
+  reset(fin);
+  setlength(a,0);
+  while not eof(fin) do
+    begin
+      setlength(a,length(a)+1);
+      with a[length(a)-1] do
+        readln(fin,year,month,day);
+    end;
+  len:=length(a);
+  for i:=1 to len-1 do
+    for j:=i+1 to len do
+      if a[i-1]<a[j-1] then
+        begin
+          tmp:=a[i-1];
+          a[i-1]:=a[j-1];
+          a[j-1]:=tmp;
+        end;
+  showmessage(len.ToString);
+  for i:=0 to len-1 do
+    begin
+      pth:=a[i].year.ToString+'\'+
+           a[i].month.ToString+'\'+
+           a[i].day.ToString;
+      salt:=a[i].year.ToString+'S'+
+            a[i].month.ToString+'S'+
+            a[i].day.ToString+'S';
+      zul_file_system.createdir('exports\'+pth);
+      zul_file_system.writetofile('exports\'+pth+'\index.html',
+        '<html><head><meta charset="UTF-8"><title>'+
+          a[i].year.ToString+'.'+
+          a[i].month.ToString+'.'+
+          a[i].day.ToString+
+        '</title><script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script><script>function hex2int(a){if("0"<=a&&a<="9")return a-"0";else return a-"A"+10;}function crypt(key){const ciphertext="'+
+        string2hex(zul_file_system.loadfromfile('bin\'+pth+'\context.ini'))+
+        '";const len=ciphertext.length,len2=key.length;var cipher2="";for(var i=0;i<len/2;i++)cipher2+=String.fromCharCode((hex2int(ciphertext[i*2])*16+hex2int(ciphertext[i*2+1]))^(key[i%len2]).charCodeAt());return cipher2;}function check(){var psw=document.getElementById("psw").value;if(md5("'+
+          salt+
+        '"+psw)=="'+zul_file_system.loadfromfile('bin\'+pth+'\password.ini')+
+        '"){document.getElementById("main").innerHTML=crypt(psw);document.getElementById("verify").innerHTML="";}else alert("Password Wrong.\n\rAccess Denied");}</script></head><body><div id="verify"><p>Password:</p><input type="password" id="psw"><button onclick="check()">Submit</button></div><div id="main"></div></body></html>');
+    end;
+end;
+
+procedure TForm1.MenuItem2Click(Sender: TObject);
+begin
+  showmessage('It''s a open source project.'+#13#10+
+              'See its source code on Github:'+#13#10+
+              'https://github.com/zhuchengyang0207/diaryManager');
+end;
+
+procedure TForm1.MenuItem3Click(Sender: TObject);
+begin
+  showmessage('This project is made by zhuchengyang0207'+#13#10+
+              'Visit my Github: https://github.com/zhuchengyang0207'+#13#10+
+              '');
+end;
+
+procedure TForm1.MenuItem4Click(Sender: TObject);
+begin
+  showmessage('The code is copyleft. But please indicate the source.'+#13#10+
+              'Irresponsible for any bugs.'+#13#10+
+              'Do not tamper with files in the directory.');
+end;
+
+procedure TForm1.SpinEdit2Change(Sender: TObject);
+begin
+  if SpinEdit2.Value>SpinEdit2.MaxValue then
+    SpinEdit2.Value:=SpinEdit2.MaxValue;
+  if SpinEdit2.Value<SpinEdit2.MinValue then
+    SpinEdit2.Value:=SpinEdit2.MinValue;
+  if IsLeapYear(SpinEdit1.Value) then
+    dates_[2]:=29
+  else
+    dates_[2]:=28;
+  if SpinEdit3.Value>dates_[SpinEdit2.Value] then
+    SpinEdit3.Value:=dates_[SpinEdit2.Value];
+  SpinEdit3.MaxValue:=dates_[SpinEdit2.Value];
+end;
+
+procedure TForm1.SpinEdit3Change(Sender: TObject);
+begin
+  if SpinEdit3.Value>SpinEdit3.MaxValue then
+    SpinEdit3.Value:=SpinEdit3.MaxValue;
+  if SpinEdit3.Value<SpinEdit3.MinValue then
+    SpinEdit3.Value:=SpinEdit3.MinValue;
+end;
+
+end.
+
