@@ -287,7 +287,7 @@ begin
     begin
       setlength(a,length(a)+1);
       with a[length(a)-1] do
-        read(fin,year,month,day);
+        readln(fin,year,month,day);
     end;
   len:=length(a);
   for i:=1 to len-1 do
@@ -298,7 +298,6 @@ begin
           a[i-1]:=a[j-1];
           a[j-1]:=tmp;
         end;
-  showmessage(len.ToString);
   for i:=0 to len-1 do
     begin
       pth:=a[i].year.ToString+'\'+

@@ -268,6 +268,7 @@ begin
   ans:='';
   for i:=1 to length(a) do
     ans:=ans+int2hex(ord(a[i])div 16)+int2hex(ord(a[i])mod 16);
+  exit(ans);
 end;
 
 procedure TForm1.Button5Click(Sender: TObject);
@@ -298,7 +299,6 @@ begin
           a[i-1]:=a[j-1];
           a[j-1]:=tmp;
         end;
-  showmessage(len.ToString);
   for i:=0 to len-1 do
     begin
       pth:=a[i].year.ToString+'\'+
