@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="F:\lazarus\fpc\2.6.4\bin\x86_64-win64\fpc.exe" Date="1195665052"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -WG -l -vewnhibq &quot;-FiF:\Zhu Chengyang's Folder\GitHub\diaryManager\1.3\diaryManager_source_code\lib\x86_64-win64&quot; -FuF:\lazarus\lcl\units\x86_64-win64\win32 -FuF:\lazarus\lcl\units\x86_64-win64 -FuF:\lazarus\components\lazutils\lib\x86_64-win64 -FuF:\lazarus\packager\units\x86_64-win64 &quot;-FuF:\Zhu Chengyang's Folder\GitHub\diaryManager\1.3\diaryManager_source_code\&quot; &quot;-FUF:\Zhu Chengyang's Folder\GitHub\diaryManager\1.3\diaryManager_source_code\lib\x86_64-win64\&quot; -dLCL -dLCLwin32 diaryManager.lpr"/>
+  <Complete Value="False"/>
+</CONFIG>
