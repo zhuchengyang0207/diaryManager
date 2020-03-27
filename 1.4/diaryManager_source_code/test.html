@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>TEST</title>
+		<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>  
+		<script>
+			function int2hex(a){
+				if(0<=a&&a<=9)
+					return String.fromCharCode(a+48);
+				else
+					return String.fromCharCode(a+55);
+			}
+			function crypt(key,ciphertext){
+				const len=ciphertext.length,len2=key.length;
+				console.log(len);
+				var cipher2="";
+				for(var i=0;i<len;i++){
+					//cipher2+=String.fromCharCode((hex2int(ciphertext[i*2])*16+hex2int(ciphertext[i*2+1]))^(key[i%len2]).charCodeAt());
+					var nw1=(ciphertext[i]).charCodeAt()^(key[i%len2]).charCodeAt();
+					console.log(nw1);
+						var nw=Math.floor(nw1/256);
+						console.log(nw);
+						cipher2+=int2hex(Math.floor(nw/16))+int2hex(nw%16);
+						nw=nw1%256;
+						console.log(nw);
+						cipher2+=int2hex(Math.floor(nw/16))+int2hex(nw%16);
+				}
+				return cipher2;
+			}
+			function check(){
+				var psw=document.getElementById("psw").value;
+				var con=document.getElementById("cont").value;
+				console.log(crypt(psw,con));
+			}
+		</script>
+	</head>
+	<body>
+		<div id="verify">
+			<p>Plaintext:</p>
+			<input id="cont">
+			<p>Password:</p>
+			<input type="password" id="psw">
+			<button onclick="check()">Submit</button>
+		</div>
+		<div id="main"></div>
+	</body>
+</html>
