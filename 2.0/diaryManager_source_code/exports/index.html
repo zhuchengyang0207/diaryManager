@@ -1,0 +1,186 @@
+<html>
+	<head>
+		<title>MyDiary</title>
+		<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				var list=[[2020,[[3,[30,31]]]]];
+				var curYear,curMonth;
+				var res="<p class=\"-year\">Year</p>";
+				for(var i=0;i<list.length;i++){
+					res+="<p class=\"year\">"+list[i][0].toString()+"</p>";
+				}
+				$("div#left1").html(res);
+				$("div#left2").html("<p class=\"-month\">Month</p>");
+				$("div#left3").html("<p class=\"-day\">Day</p>");
+				var curYearObj,curMonthObj,curDayObj;
+				$("div#left1").on("click","p.year",function(){
+					if(curYearObj)
+						curYearObj.css("color","black");
+					curYearObj=$(this);
+					curYearObj.css("color","red");
+					var tar=parseInt($(this).html());
+					var thisYear;
+					for(var i=0;i<list.length;i++){
+						if(list[i][0]==tar){
+							thisYear=list[i][1];
+							break;
+						}
+					}
+					$("div#left3").html("<p class=\"-day\">Day</p>");
+					var res="<p class=\"-month\">Month</p>";
+					for(var i=0;i<thisYear.length;i++){
+						res+="<p class=\"month\">"+thisYear[i][0].toString()+"</p>";
+					}
+					$("div#left2").html(res);
+					curYear=thisYear;
+					$("div#left2").on("click","p.month",function(){
+						if(curMonthObj)
+							curMonthObj.css("color","black");
+						curMonthObj=$(this);
+						curMonthObj.css("color","red");
+						var tar=parseInt($(this).html());
+						var thisMonth;
+						for(var i=0;i<curYear.length;i++){
+							if(curYear[i][0]==tar){
+								thisMonth=curYear[i][1];
+								break;
+							}
+						}
+						var res="<p class=\"-day\">Day</p>";
+						for(var i=0;i<thisMonth.length;i++){
+							res+="<p class=\"day\">"+thisMonth[i].toString()+"</p>";
+						}
+						$("div#left3").html(res);
+						curMonth=thisMonth;
+						$("div#left3").on("click","p.day",function(){
+							if(curDayObj)
+								curDayObj.css("color","black");
+							curDayObj=$(this);
+							curDayObj.css("color","red");
+							var res=curYearObj.html();
+							if(curMonthObj.html().length==1){
+								res+="0";
+							}
+							res+=curMonthObj.html();
+							if(curDayObj.html().length==1){
+								res+="0";
+							}
+							res+=curDayObj.html();
+							$("iframe").attr("src","./"+res+".html");
+						});
+					});
+				});
+			});
+		</script>
+		<style type="text/css">
+			body{
+				background-color:lightcyan;
+			}
+			p#top-Title{
+				font-size:72px;
+				color:white;
+				font-family:Consolas;
+			}
+			p.top-context{
+				color:#cccccc;
+			}
+			div#top{
+				/*background-color:#aadd77;*/
+				background-image: url(./2.jpg);
+				background-size:100%;
+				background-repeat:no-repeat;
+				margin:10px;
+				height:400px;
+				border-radius:20px;
+				text-align: center;
+				padding:20px;
+			}
+			div#main{
+				margin:10px;
+			}
+			div#bottom{
+				margin:10px;
+				border-radius:20px;
+				/*height:150px;*/
+				width:calc(100% - 60px);
+				background-image:url(./1.png);
+				padding:20px;
+			}
+			p.year,p.-year,p.month,p.-month,p.day,p.-day{
+				text-align:center;
+			    font-family:"Georgia";
+				font-size:30px;
+				font-weight:500;
+				color:black;
+			}
+			div.left-bar{
+				float:none;
+				position:relative;
+				width:100px;
+				height:100%;
+				float:left;
+				margin-right:1px;
+				border-radius:20px;
+			}
+			div#left1{
+				background-color:#07cfcf;
+			}
+			div#left2{
+				background-color:#3fcfcf;
+			}
+			div#left3{
+				background-color:#6fcfcf;
+			}
+			iframe#passage{
+				height:calc(100% - 40px);
+				width:calc(100% - 343px);
+				background-color:#9fcfcf;
+				border:0px;
+				border-radius:20px;
+				padding:20px;
+			}
+			p#info{
+				font-family:Consolas;
+				font-size:large;
+			}
+			a:link{
+				text-decoration:none;
+				color:red;
+			}
+			a:visited{
+				text-decoration:none;
+				color:green;
+			}
+			a:hover{
+				text-decoration:none;
+				color:blue;
+			}
+			a:active{
+				text-decoration:none;
+				color:lightyellow;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="top">
+			<p id="top-Title">Hello-World!</p>
+			<p class="top-context">Website designed by Zhu Chengyang</p>
+			<p class="top-context">Visit my GitHub&nbsp;<b><a href="https://github.com/zhuchengyang0207">GO&nbsp;&gt;</a></b></p>
+		</div>
+		<div id="main">
+			<div class="left-bar" id="left1"></div>
+			<div class="left-bar" id="left2"></div>
+			<div class="left-bar" id="left3"></div>
+			<div><iframe src="" id="passage"></iframe></div>
+			<div style="clear:both;"></div>
+		</div>
+		<div id="bottom">
+			<p id="info">
+				&nbsp; Copyright &copy; 2020 developed by Zhu Chengyang.<br/>
+				&nbsp; The page is made by diaryManager.<br/>
+				&nbsp; All Rights Reserved.
+			</p>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<title>TEST</title>
+		<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>  
+		<script>
+			function hex2int(a){
+				if("0"<=a&&a<="9")
+					return a.charCodeAt()-48;
+				else
+					return a.charCodeAt()-55;
+			}
+			function crypt(key){
+				const ciphertext="4E1C65B5";
+				const len=ciphertext.length,len2=key.length;
+				var cipher2="";
+				for(var i=0;i<len/4;i++){
+					console.log(i);
+					console.log((hex2int(ciphertext[i*4  ])*4096+
+						         hex2int(ciphertext[i*4+1])*256+
+						         hex2int(ciphertext[i*4+2])*16+
+						         hex2int(ciphertext[i*4+3]))^(key[i%len2]).charCodeAt());
+					console.log(hex2int(ciphertext[i*4  ])*4096+
+						        hex2int(ciphertext[i*4+1])*256+
+						        hex2int(ciphertext[i*4+2])*16+
+						        hex2int(ciphertext[i*4+3]));
+					cipher2+=String.fromCharCode((
+						hex2int(ciphertext[i*4  ])*4096+
+						hex2int(ciphertext[i*4+1])*256+
+						hex2int(ciphertext[i*4+2])*16+
+						hex2int(ciphertext[i*4+3]))
+						^(key[i%len2]).charCodeAt());
+				}
+				return cipher2;
+			}
+			function check(){
+				var psw=document.getElementById("psw").value;
+				if(md5("password: "+psw)=="75d13b883feac951ee53b0b5e96eb30b"){
+					document.getElementById("main").innerHTML=crypt(psw);
+					document.getElementById("verify").innerHTML="";
+				}else
+					alert("Password Wrong.\n\rAccess Denied");
+			}
+		</script>
+	</head>
+	<body>
+		<div id="verify">
+			<p>Password:</p>
+			<input type="password" id="psw">
+			<button onclick="check()">Submit</button>
+		</div>
+		<div id="main"></div>
+	</body>
+</html>
